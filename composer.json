@@ -1,0 +1,14 @@
+{
+  "name": "daverandom/mutex",
+  "description": "Basic common mutex framework for amp",
+  "minimum-stability": "stable",
+  "license": "MIT",
+  "authors": [{"name": "Chris Wright"}],
+  "autoload": {
+    "psr-4": {"Amp\\Mutex\\": "src/"}
+  },
+  "require": {
+    "php": ">=7",
+    "amphp/amp": "^1"
+  }
+}
