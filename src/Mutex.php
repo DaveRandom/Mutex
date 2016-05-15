@@ -6,6 +6,10 @@ use Amp\Promise;
 
 interface Mutex
 {
-    public function withLock(callable $callback): Promise;
+    /**
+     * @param callable|\Generator $generator
+     * @return Promise
+     */
+    public function withLock($generator): Promise;
     public function getLock(): Promise;
 }

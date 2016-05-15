@@ -7,31 +7,35 @@ use function Amp\resolve;
 
 abstract class BaseMutex implements Mutex
 {
-    private function doWithLock(callable $callback): \Generator
+    protected function executeCoroutineWithLock(\Generator $generator): Promise
     {
-        /** @var Lock $lock */
-        $lock = yield $this->getLock();
+        return resolve(function() use($generator) {
+            /** @var Lock $lock */
+            $lock = yield $this->getLock();
 
-        try {
-            $result = $callback();
-
-            if ($result instanceof \Generator) {
-                return yield from $result;
+            try {
+                return yield from $generator;
+            } finally {
+                $lock->release();
             }
-
-            if ($result instanceof Promise) {
-                return yield $result;
-            }
-
-            return $result;
-        } finally {
-            $lock->release();
-        }
+        });
     }
 
-    public function withLock(callable $callback): Promise
+    public function withLock($generator): Promise
     {
-        return resolve($this->doWithLock($callback));
+        if (!$generator instanceof \Generator) {
+            if (!is_callable($generator)) {
+                throw new \InvalidArgumentException('Locked routine must be callable or instance of Generator');
+            }
+
+            $generator = $generator();
+
+            if (!$generator instanceof \Generator) {
+                throw new \LogicException('Locked routine callable must return instance of Generator');
+            }
+        }
+
+        return resolve($this->executeCoroutineWithLock($generator));
     }
 
     abstract public function getLock(): Promise;

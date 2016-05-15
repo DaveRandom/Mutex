@@ -9,6 +9,6 @@
   },
   "require": {
     "php": ">=7",
-    "amphp/amp": "^1"
+    "amphp/amp": "^1.2"
   }
 }
