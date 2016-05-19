@@ -35,7 +35,7 @@ abstract class BaseMutex implements Mutex
             }
         }
 
-        return resolve($this->executeCoroutineWithLock($generator));
+        return $this->executeCoroutineWithLock($generator);
     }
 
     abstract public function getLock(): Promise;
